@@ -1,0 +1,96 @@
+{
+  "label": "AI Studio",
+  "name": "aistudio",
+  "dependencies": [
+    {
+      "type": "service",
+      "name": "http",
+      "version": "^v1.3.7"
+    }
+  ],
+  "configuration": [
+    {
+      "label": "Authentication Method",
+      "name": "authenticationMethod",
+      "type": "dropdown",
+      "values": [
+        {
+          "label": "API Token",
+          "value": "apiToken"
+        },
+        {
+          "label": "Credentials",
+          "value": "credentials"
+        }
+      ],
+      "defaultValue": "apiToken",
+      "required": true
+    },
+    {
+      "label": "API Token",
+      "name": "apiToken",
+      "type": "password",
+      "required": "config.authenticationMethod == 'apiToken'"
+    },
+    {
+      "label": "Email",
+      "name": "email",
+      "type": "text",
+      "required": "config.authenticationMethod == 'credentials'"
+    },
+    {
+      "label": "Password",
+      "name": "password",
+      "type": "password",
+      "required": "config.authenticationMethod == 'credentials'"
+    },
+    {
+      "label": "AI Studio API URL",
+      "name": "aiStudioBaseUrl",
+      "type": "label",
+      "value": "https://aistudio.slingrs.io/prod/runtime/api"
+    },
+    {
+      "label": "Webhook URL",
+      "name": "webhookUrl",
+      "type": "label",
+      "value": "@config.WEBHOOK_URL"
+    },
+    {
+      "label": "Check Webhooks Signature",
+      "name": "checkWebhooksSignature",
+      "type": "toggle",
+      "defaultValue": false
+    },
+    {
+      "label": "Webhooks Signing Secret",
+      "name": "webhooksSigningSecret",
+      "type": "password",
+      "required": "config.checkWebhooksSignature == true"
+    }
+  ],
+  "events": [
+    {
+      "label": "Webhook",
+      "name": "webhook",
+      "description": "Happens when AI Studio hits the endpoint URL."
+    }
+  ],
+  "metadata": [
+    {
+      "type": "script",
+      "namespace": "api",
+      "path": "/scripts/api.js"
+    },
+    {
+      "type": "script",
+      "namespace": "utils",
+      "path": "/scripts/utils.js"
+    },
+    {
+      "type": "listener",
+      "namespace": "webhook",
+      "path": "/listeners/webhook.js"
+    }
+  ]
+}
