@@ -34,21 +34,21 @@
       "name": "apiToken",
       "type": "password",
       "required": "config.authenticationMethod == 'apiToken'",
-      "visible": "config.authenticationMethod == 'apiToken'"
+      "visibility": "config.authenticationMethod == 'apiToken'"
     },
     {
       "label": "Email",
       "name": "email",
       "type": "text",
       "required": "config.authenticationMethod == 'credentials'",
-      "visible": "config.authenticationMethod == 'credentials'"
+      "visibility": "config.authenticationMethod == 'credentials'"
     },
     {
       "label": "Password",
       "name": "password",
       "type": "password",
       "required": "config.authenticationMethod == 'credentials'",
-      "visible": "config.authenticationMethod == 'credentials'"
+      "visibility": "config.authenticationMethod == 'credentials'"
     },
     {
       "label": "AI Studio API URL",
@@ -73,7 +73,7 @@
       "name": "webhooksSigningSecret",
       "type": "password",
       "required": "config.checkWebhooksSignature == true",
-      "visible": "config.checkWebhooksSignature == true"
+      "visibility": "config.checkWebhooksSignature == true"
     }
   ],
   "events": [
