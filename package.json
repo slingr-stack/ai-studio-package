@@ -83,7 +83,7 @@
       "path": "/scripts/api.js"
     },
     {
-      "type": "tasks",
+      "type": "script",
       "namespace": "tasks",
       "path": "/scripts/tasks.js"
     },
