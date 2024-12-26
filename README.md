@@ -95,15 +95,28 @@ For more details about making HTTP requests, refer to the [HTTP service document
 
 ## Webhook
 
-This event is triggered when AI Studio sends a webhook to your configured URL. The event data contains the raw payload sent by AI Studio.
+This event is triggered when AI Studio sends a webhook to your configured URL in the project. The event data contains the raw payload sent by AI Studio.
 
 Example:
 
 ```javascript
 sys.events.on('aistudio:webhook', function(event) {
-  sys.logs.info('Webhook received:', event.data);
+  sys.logs.info('Webhook received:', event.data.type);
   // Process the webhook data
 });
+```
+
+As you can see, the `type` field will indicate the type of event. Look below for the types available.
+
+### Task ready
+
+Type: `taskReady`
+
+When a task is ready, a webhook is sent with the following information:
+
+```javascript
+sys.logs.info(`Task ID: ${event.data.taskId}`);
+sys.logs.info(`Response: ${event.data.response}`);
 ```
 
 # About Slingr

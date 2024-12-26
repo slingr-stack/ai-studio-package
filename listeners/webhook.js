@@ -19,7 +19,7 @@ listeners.defaultWebhookAI = {
         if (pkg.aistudio.utils.verifyWebhookSecret(webhookSecret)) {
             sys.events.triggerEvent("aistudio:webhook", event.data);
         } else {
-            sys.logs.warn('[ai-studio] Invalid webhook secret');
+            sys.logs.warn('[aistudio] Invalid webhook secret');
         }
     }
 };

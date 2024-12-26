@@ -83,6 +83,11 @@
       "path": "/scripts/api.js"
     },
     {
+      "type": "tasks",
+      "namespace": "tasks",
+      "path": "/scripts/tasks.js"
+    },
+    {
       "type": "script",
       "namespace": "utils",
       "path": "/scripts/utils.js"
