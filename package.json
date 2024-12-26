@@ -13,16 +13,19 @@
       "label": "Authentication Method",
       "name": "authenticationMethod",
       "type": "dropdown",
-      "values": [
-        {
-          "label": "API Token",
-          "value": "apiToken"
-        },
-        {
-          "label": "Credentials",
-          "value": "credentials"
-        }
-      ],
+      "typeOptions": {
+        "allowCustom": true,
+        "possibleValues":[
+          {
+            "label":"API Token",
+            "name":"apiToken"
+          },
+          {
+            "label":"Credentials",
+            "name":"credentials"
+          }
+        ]
+      },
       "defaultValue": "apiToken",
       "required": true
     },
