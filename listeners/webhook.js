@@ -2,7 +2,7 @@
  Webhooks
  ****************************************************/
 
-listeners.defaultAIStudioWebhook = {
+listeners.defaultWebhookAIStudio = {
     label: 'Catch HTTP AI Studio events',
     type: 'service',
     options: {
