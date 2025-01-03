@@ -72,7 +72,7 @@ exports.waitToBeReady = function(taskId, timeout) {
     let start = new Date().getTime();
     let taskResponse = sys.storage.get(`aistudio_task_response_${taskId}`);
     while (!taskResponse) {
-        sys.utils.scripts.wait(100);
+        sys.utils.script.wait(100);
         let end = new Date().getTime();
         if (end - start > timeout) {
             throw `Waiting for task [${taskId}] to be ready took more than [${timeout}] ms`;
