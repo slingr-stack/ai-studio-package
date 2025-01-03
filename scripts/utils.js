@@ -29,7 +29,7 @@ exports.verifyWebhookSecret = function (webhookSecretFromHeader) {
  * @returns {string} The ID of the uploaded file.
  */
 exports.uploadFile = function(fileId) {
-    let fileUploadResult = pkg.aistudio.post(
+    let fileUploadResult = pkg.aistudio.api.post(
         '/files',
         {}, // no body needed, files are sent in settings.parts
         {
