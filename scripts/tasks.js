@@ -65,18 +65,20 @@ exports.execute = function(projectCode, agentCode, inputs, callback) {
 /**
  * Waits for the task to be ready. It
  * @param {string} taskId - The ID of the task to wait for.
- * @param {number} timeout - Maximum time in milliseconds to wait for the task to be ready. An exception will be thrown.
+ * @param {number} timeout - Maximum time in milliseconds to wait for the task to be ready. An exception will be thrown. Default to 10 minutes.
  * @returns {string} The response of the task.
  */
 exports.waitToBeReady = function(taskId, timeout) {
+    timeout = timeout || (1000 * 60 * 5);
     let start = new Date().getTime();
     let taskResponse = sys.storage.get(`aistudio_task_response_${taskId}`);
     while (!taskResponse) {
         sys.utils.script.wait(100);
         let end = new Date().getTime();
-        if (end - start > timeout) {
+        if ((end - start) > timeout) {
             throw `Waiting for task [${taskId}] to be ready took more than [${timeout}] ms`;
         }
         taskResponse = sys.storage.get(`aistudio_task_response_${taskId}`);
     }
+    return taskResponse;
 }
