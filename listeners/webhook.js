@@ -14,8 +14,10 @@ listeners.defaultWebhookAIStudio = {
     },
     callback: function(event) {
         let headers = event.data.headers;
+        sys.logs.debug(`[aistudio] Headers: ${headers}`);
         let data = event.data.body;
         let webhookSecret = headers['AI-Studio-Webhook-Secret'] || headers['ai-studio-webhook-secret'];
+        sys.logs.debug(`[aistudio] webhookSecret: ${webhookSecret}`);
 
         if (pkg.aistudio.utils.verifyWebhookSecret(webhookSecret)) {
             let eventType = data.type;
