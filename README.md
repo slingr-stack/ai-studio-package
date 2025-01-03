@@ -86,12 +86,12 @@ For more details about making HTTP requests, refer to the [HTTP service document
 
 ## Tasks utilities
 
-### Create task
+### Execute task
 
 You can easily create a task like this:
 
 ```javascript
-let taskId = pkg.aistudio.tasks.executeTask(projectCode, agentCode, inputs);  
+let taskId = pkg.aistudio.tasks.execute(projectCode, agentCode, inputs);  
 ```
 
 Here, `inputs` is a map with the inputs needed by the agent. If the input is a file, you need to pass the file ID.
@@ -99,7 +99,7 @@ Here, `inputs` is a map with the inputs needed by the agent. If the input is a f
 Additionally, you can pass a callback that will be called when the task is ready in an async way:
 
 ```javascript
-pkg.aistudio.tasks.executeTask(projectCode, agentCode, inputs, function(taskId, response) {
+pkg.aistudio.tasks.execute(projectCode, agentCode, inputs, function(taskId, response) {
     // do something with the response
 });
 ```
@@ -111,7 +111,7 @@ Keep in mind that the callback is called async and the context is lost.
 It is possible to wait for a task to ready like this:
 
 ```javascript
-let taskId = pkg.aistudio.tasks.executeTask(projectCode, agentCode, inputs);
+let taskId = pkg.aistudio.tasks.execute(projectCode, agentCode, inputs);
 let response = pkg.aistudio.tasks.waitToBeReady(taskId);
 log(response);
 ```
@@ -119,7 +119,7 @@ log(response);
 By default, it will wait up to 5 minutes to find the response, but you can change that default using the second param:
 
 ```javascript
-let taskId = pkg.aistudio.tasks.executeTask(projectCode, agentCode, inputs);
+let taskId = pkg.aistudio.tasks.execute(projectCode, agentCode, inputs);
 let response = pkg.aistudio.tasks.waitToBeReady(taskId, 1000 * 60 * 10);
 log(response);
 ```

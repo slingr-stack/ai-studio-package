@@ -6,9 +6,9 @@
  * @param {function} callback - The callback to be called when the task is ready. Webhooks have to be enabled.
  * @returns {string} The task ID
  */
-exports.executeTask = function(projectCode, agentCode, inputs, callback) {
+exports.execute = function(projectCode, agentCode, inputs, callback) {
     // Find the agent by code using the API
-    let agentsResponse = pkg.aistudio.get('/data/agents', {'project.code': projectCode, code: agentCode});
+    let agentsResponse = pkg.aistudio.api.get('/data/agents', {'project.code': projectCode, code: agentCode});
 
     if (!agentsResponse || !agentsResponse.items || agentsResponse.items.length === 0) {
         throw new Error('Agent not found for code: ' + agentCode);
@@ -52,7 +52,7 @@ exports.executeTask = function(projectCode, agentCode, inputs, callback) {
         inputs: taskInputs
     };
 
-    let createTaskResponse = pkg.aistudio.post('/data/tasks', task);
+    let createTaskResponse = pkg.aistudio.api.post('/data/tasks', task);
     let taskId = createTaskResponse.id;
 
     if (callback) {
@@ -68,7 +68,7 @@ exports.executeTask = function(projectCode, agentCode, inputs, callback) {
  * @param {number} timeout - Maximum time in milliseconds to wait for the task to be ready. An exception will be thrown.
  * @returns {string} The response of the task.
  */
-exports.waitForTask = function(taskId, timeout) {
+exports.waitToBeReady = function(taskId, timeout) {
     let start = new Date().getTime();
     let taskResponse = sys.storage.get(`aistudio_task_response_${taskId}`);
     while (!taskResponse) {
