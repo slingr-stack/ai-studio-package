@@ -74,22 +74,55 @@ Name: `webhooksSigningSecret`
 You can use the following methods to make requests to the AI Studio API:
 
 ```javascript
-pkg.aistudio.api.get('/users'); // GET request
+pkg.aistudio.api.get('/tasks'); // GET request
 pkg.aistudio.api.post('/projects', { name: 'My Project' }); // POST request
-pkg.aistudio.api.put('/projects/123', { status: 'completed' }); // PUT request
+pkg.aistudio.api.put('/projects/123/action', { name: 'New name' }); // PUT request
 pkg.aistudio.api.delete('/projects/123'); // DELETE request
 ```
 
 The package automatically handles authentication and includes the necessary headers.
 
-Example using query parameters:
-
-```javascript
-pkg.aistudio.api.get('/projects?status=active&limit=10');
-```
-
 For more details about making HTTP requests, refer to the [HTTP service documentation](https://github.com/slingr-stack/http-service).
 
+## Tasks utilities
+
+### Create task
+
+You can easily create a task like this:
+
+```javascript
+let taskId = pkg.aistudio.tasks.executeTask(projectCode, agentCode, inputs);  
+```
+
+Here, `inputs` is a map with the inputs needed by the agent. If the input is a file, you need to pass the file ID.
+
+Additionally, you can pass a callback that will be called when the task is ready in an async way:
+
+```javascript
+pkg.aistudio.tasks.executeTask(projectCode, agentCode, inputs, function(taskId, response) {
+    // do something with the response
+});
+```
+
+Keep in mind that the callback is called async and the context is lost.
+
+### Wait for task
+
+It is possible to wait for a task to ready like this:
+
+```javascript
+let taskId = pkg.aistudio.tasks.executeTask(projectCode, agentCode, inputs);
+let response = pkg.aistudio.tasks.waitToBeReady(taskId);
+log(response);
+```
+
+By default, it will wait up to 5 minutes to find the response, but you can change that default using the second param:
+
+```javascript
+let taskId = pkg.aistudio.tasks.executeTask(projectCode, agentCode, inputs);
+let response = pkg.aistudio.tasks.waitToBeReady(taskId, 1000 * 60 * 10);
+log(response);
+```
 
 # Events
 
@@ -100,10 +133,7 @@ This event is triggered when AI Studio sends a webhook to your configured URL in
 Example:
 
 ```javascript
-sys.events.on('aistudio:webhook', function(event) {
-  sys.logs.info('Webhook received:', event.data.type);
-  // Process the webhook data
-});
+sys.logs.info('Webhook received:', event.data.type);
 ```
 
 As you can see, the `type` field will indicate the type of event. Look below for the types available.
@@ -116,6 +146,7 @@ When a task is ready, a webhook is sent with the following information:
 
 ```javascript
 sys.logs.info(`Task ID: ${event.data.taskId}`);
+sys.logs.info(`Callback executed: ${event.data.callbackExecuted}`);
 sys.logs.info(`Response: ${event.data.response}`);
 ```
 

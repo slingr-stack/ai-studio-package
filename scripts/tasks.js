@@ -3,9 +3,10 @@
  * @param {string} projectCode - The code of the project the agent belongs to.
  * @param {string} agentCode - The code of the agent to execute the task for.
  * @param {object} inputs - A map of input names to their values. For file inputs send the ID of the file.
+ * @param {function} callback - The callback to be called when the task is ready. Webhooks have to be enabled.
  * @returns {string} The task ID
  */
-exports.executeTask = function(projectCode, agentCode, inputs) {
+exports.executeTask = function(projectCode, agentCode, inputs, callback) {
     // Find the agent by code using the API
     let agentsResponse = pkg.aistudio.get('/data/agents', {'project.code': projectCode, code: agentCode});
 
@@ -52,6 +53,30 @@ exports.executeTask = function(projectCode, agentCode, inputs) {
     };
 
     let createTaskResponse = pkg.aistudio.post('/data/tasks', task);
+    let taskId = createTaskResponse.id;
 
-    return createTaskResponse.id;
+    if (callback) {
+        sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
+    }
+
+    return taskId;
 };
+
+/**
+ * Waits for the task to be ready. It
+ * @param {string} taskId - The ID of the task to wait for.
+ * @param {number} timeout - Maximum time in milliseconds to wait for the task to be ready. An exception will be thrown.
+ * @returns {string} The response of the task.
+ */
+exports.waitForTask = function(taskId, timeout) {
+    let start = new Date().getTime();
+    let taskResponse = sys.storage.get(`aistudio_task_response_${taskId}`);
+    while (!taskResponse) {
+        sys.utils.scripts.wait(100);
+        let end = new Date().getTime();
+        if (end - start > timeout) {
+            throw `Waiting for task [${taskId}] to be ready took more than [${timeout}] ms`;
+        }
+        taskResponse = sys.storage.get(`aistudio_task_response_${taskId}`);
+    }
+}
