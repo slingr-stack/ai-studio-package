@@ -8,7 +8,7 @@
  */
 exports.execute = function(projectCode, agentCode, inputs, callback) {
     // Find the agent by code using the API
-    let agentsResponse = pkg.aistudio.api.get('/data/agents', {'project.code': projectCode, code: agentCode});
+    let agentsResponse = pkg.aistudio.api.get(`/data/agents?project.code=${projectCode}&code=${agentCode}`);
 
     if (!agentsResponse || !agentsResponse.items || agentsResponse.items.length === 0) {
         throw new Error('Agent not found for code: ' + agentCode);
