@@ -108,6 +108,9 @@ exports.chat = function(taskId, files, message, options, callback) {
         sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
     }
 
+    // Clear response in case there is an old one for this task
+    sys.storage.remove(`aistudio_task_response_${taskId}`);
+
     return taskId;
 };
 
@@ -129,5 +132,6 @@ exports.waitToBeReady = function(taskId, timeout) {
         }
         taskResponse = sys.storage.get(`aistudio_task_response_${taskId}`);
     }
+    sys.storage.remove(`aistudio_task_response_${taskId}`);
     return taskResponse;
 }
