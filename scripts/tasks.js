@@ -63,6 +63,55 @@ exports.execute = function(projectCode, agentCode, inputs, callback) {
 };
 
 /**
+ * Adds a message to the task.
+ * @param taskId {string} - The ID of the task to add a message.
+ * @param files {string[]} - The ID of the files to send in the message. Optional.
+ * @param message {string} - The message to add to the task.
+ * @param options {string} - Options for this interaction (like overriding the model).
+ * @param callback {function} - A callback to call when the response from the model is ready. Optional.
+ */
+exports.chat = function(taskId, files, message, options, callback) {
+    options = options || {};
+
+    let body = {
+        message: message
+    };
+
+    // If there are files, we need to upload them first
+    if (files) {
+        body.files = [];
+        files.forEach(fileId => {
+            let uploadedFileId = pkg.aistudio.utils.uploadFile(fileId);
+            body.files.push(uploadedFileId);
+        })
+    }
+
+    // If there are model settings, we need to convert the model code to model ID
+    if (options.modelSettings == 'override') {
+        if (!options.model) {
+            throw new Error('No model providing when overriding model settings');
+        }
+
+        let modelsResponse = pkg.aistudio.api.get('/data/models', {code: options.model, _size: 1});
+
+        if (!modelsResponse || !modelsResponse.items || modelsResponse.items.length === 0) {
+            throw new Error('No model found with this code: ' + options.model);
+        }
+
+        options.model = modelsResponse.items[0].id;
+        body.moreOptions = options;
+    }
+
+    pkg.aistudio.api.put(`/data/tasks/${taskId}/chat`, body);
+
+    if (callback) {
+        sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
+    }
+
+    return taskId;
+};
+
+/**
  * Waits for the task to be ready. It
  * @param {string} taskId - The ID of the task to wait for.
  * @param {number} timeout - Maximum time in milliseconds to wait for the task to be ready. An exception will be thrown. Default to 10 minutes.

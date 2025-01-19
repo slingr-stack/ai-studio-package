@@ -106,6 +106,24 @@ pkg.aistudio.tasks.execute(projectCode, agentCode, inputs, function(taskId, resp
 
 Keep in mind that the callback is called async and the context is lost.
 
+### Chat in task
+
+You can add a new message to a task like this:
+
+```javascript
+pkg.aistudio.tasks.chat(taskId, null, 'The total in the answer does not match. Can you review it?');
+```
+
+You can then wait for a response for the task or you can use a callback as well:
+
+```javascript
+pkg.aistudio.tasks.chat(taskId, null, 'The total in the answer does not match. Can you review it?', null, function(taslId, response) {
+    // do something with the response
+});
+```
+
+Keep in mind that the callback is called async and the context is lost.
+
 ### Wait for task
 
 It is possible to wait for a task to ready like this:
