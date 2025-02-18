@@ -23,19 +23,19 @@ listeners.defaultWebhookAIStudio = {
                 let taskId = data.taskId;
                 // If this is an event of type taskReady we will try to find a callback for it
                 let callback = sys.storage.get(`aistudio_task_callback_${taskId}`);
+                let callbackData = sys.storage.get(`aistudio_task_callback_data_${taskId}`);
+                sys.storage.remove(`aistudio_task_callback_${taskId}`);
+                sys.storage.remove(`aistudio_task_callback_data_${taskId}`);
                 if (callback) {
                     sys.logs.debug(`[aistudio] Callback found for task [${taskId}]`);
                     try {
                         let params = callback.slice(callback.indexOf('(') + 1, callback.indexOf(')'));
                         let body = callback.slice(callback.indexOf('{') + 1, callback.lastIndexOf('}'));
                         let callbackFunction = new Function(params, body);
-                        let callbackData = sys.storage.get(`aistudio_task_callback_data_${taskId}`);
                         callbackFunction(taskId, data.response, callbackData);
                     } catch (e) {
                         sys.logs.error(`[aistudio] Error executing callback for task [${taskId}]`, e);
                     } finally {
-                        sys.storage.remove(`aistudio_task_callback_${taskId}`);
-                        sys.storage.remove(`aistudio_task_callback_data_${taskId}`);
                         data.callbackExecuted = true;
                     }
                 } else {
