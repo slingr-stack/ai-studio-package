@@ -29,7 +29,8 @@ listeners.defaultWebhookAIStudio = {
                         let params = callback.slice(callback.indexOf('(') + 1, callback.indexOf(')'));
                         let body = callback.slice(callback.indexOf('{') + 1, callback.lastIndexOf('}'));
                         let callbackFunction = new Function(params, body);
-                        callbackFunction(taskId, data.response);
+                        let callbackData = sys.storage.get(`aistudio_task_callback_data_${taskId}`);
+                        callbackFunction(taskId, data.response, callbackData);
                     } catch (e) {
                         sys.logs.error(`[aistudio] Error executing callback for task [${taskId}]`, e);
                     } finally {

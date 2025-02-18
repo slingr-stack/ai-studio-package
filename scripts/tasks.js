@@ -3,10 +3,11 @@
  * @param {string} projectCode - The code of the project the agent belongs to.
  * @param {string} agentCode - The code of the agent to execute the task for.
  * @param {object} inputs - A map of input names to their values. For file inputs send the ID of the file.
+ * @param {object} callbackData - Data to pass to the callback function.
  * @param {function} callback - The callback to be called when the task is ready. Webhooks have to be enabled.
  * @returns {string} The task ID
  */
-exports.execute = function(projectCode, agentCode, inputs, callback) {
+exports.execute = function(projectCode, agentCode, inputs, callbackData, callback) {
     // Find the agent by code using the API
     let agentsResponse = pkg.aistudio.api.get(`/data/agents?project.code=${projectCode}&code=${agentCode}`);
 
@@ -56,6 +57,9 @@ exports.execute = function(projectCode, agentCode, inputs, callback) {
     let taskId = createTaskResponse.id;
 
     if (callback) {
+        if (callbackData) {
+            sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: 1000 * 60 * 10});
+        }
         sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
     }
 
@@ -68,9 +72,10 @@ exports.execute = function(projectCode, agentCode, inputs, callback) {
  * @param files {string[]} - The ID of the files to send in the message. Optional.
  * @param message {string} - The message to add to the task.
  * @param options {string} - Options for this interaction (like overriding the model).
+ * @param {object} callbackData - Data to pass to the callback function.
  * @param callback {function} - A callback to call when the response from the model is ready. Optional.
  */
-exports.chat = function(taskId, files, message, options, callback) {
+exports.chat = function(taskId, files, message, options, callbackData, callback) {
     options = options || {};
 
     let body = {
@@ -105,6 +110,9 @@ exports.chat = function(taskId, files, message, options, callback) {
     pkg.aistudio.api.put(`/data/tasks/${taskId}/chat`, body);
 
     if (callback) {
+        if (callbackData) {
+            sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: 1000 * 60 * 10});
+        }
         sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
     }
 
