@@ -35,6 +35,7 @@ listeners.defaultWebhookAIStudio = {
                         sys.logs.error(`[aistudio] Error executing callback for task [${taskId}]`, e);
                     } finally {
                         sys.storage.remove(`aistudio_task_callback_${taskId}`);
+                        sys.storage.remove(`aistudio_task_callback_data_${taskId}`);
                         data.callbackExecuted = true;
                     }
                 } else {
