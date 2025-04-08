@@ -47,7 +47,7 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
             });
             taskInputs.push({
                 name: inputName,
-                file: uploadedFileIds
+                files: uploadedFileIds
             });
         } else { // Assumed to be text if not a file type
             taskInputs.push({
