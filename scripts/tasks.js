@@ -30,14 +30,24 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
         }
 
         if (agentInputDef.type === 'file') {
-            // Check if the provided value is a string (fileID)
-            if (typeof inputValue !== 'string') {
-                throw new Error('File input "' + inputName + '" must be a file ID (string).');
+            let fileIds = [];
+            if (Array.isArray(inputValue)) {
+                fileIds = inputValue
+            } else {
+                fileIds = [inputValue];
             }
-            let uploadedFileId = pkg.aistudio.utils.uploadFile(inputValue);
+            let uploadedFileIds = [];
+            fileIds.forEach((fileId, index) => {
+                // Check if the provided value is a string (fileID)
+                if (typeof fileId !== 'string') {
+                    throw new Error(`File input "${inputName}[${index}]" must be a file ID (string).`);
+                }
+                let uploadedFileId = pkg.aistudio.utils.uploadFile(fileId);
+                uploadedFileIds.push(uploadedFileId);
+            });
             taskInputs.push({
                 name: inputName,
-                file: uploadedFileId
+                files: uploadedFileIds
             });
         } else { // Assumed to be text if not a file type
             taskInputs.push({
