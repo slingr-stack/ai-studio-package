@@ -51,10 +51,34 @@
       "visibility": "config.authenticationMethod == 'credentials'"
     },
     {
+      "name": "environment",
+      "label": "Environment",
+      "type": "buttonsGroup",
+      "required": true,
+      "defaultValue": "prod",
+      "typeOptions": {
+        "allowCustom": true,
+        "possibleValues": [
+          {
+            "label": "Production",
+            "name": "prod"
+          },
+          {
+            "label": "Staging",
+            "name": "staging"
+          },
+          {
+            "label": "Production",
+            "name": "prod"
+          }
+        ]
+      }
+    },
+    {
       "label": "AI Studio API URL",
       "name": "aiStudioBaseUrl",
       "type": "label",
-      "value": "https://aistudio.slingrs.io/prod/runtime/api"
+      "value": "'https://aistudio.slingrs.io/'+config.environment+'/runtime/api'"
     },
     {
       "label": "Webhook URL",
