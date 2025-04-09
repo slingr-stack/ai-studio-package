@@ -68,8 +68,8 @@
             "name": "staging"
           },
           {
-            "label": "Production",
-            "name": "prod"
+            "label": "Development",
+            "name": "dev"
           }
         ]
       }
