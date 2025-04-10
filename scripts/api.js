@@ -121,6 +121,9 @@ function sendRequest(method, options, callbackData, callbacks) {
             refreshToken();
             options = setRequestHeaders(options); // Update headers with new token
             return dependencies.http[method](options, callbackData, callbacks);
+        } else if (isConnectionTimeout(error)) {
+            // if this is a connection timeout, we will simply retry one more time
+            return dependencies.http[method](options, callbackData, callbacks);
         } else {
             throw error;
         }
@@ -128,10 +131,20 @@ function sendRequest(method, options, callbackData, callbacks) {
 }
 
 
+function isConnectionTimeout(e) {
+    if (sys.exceptions.getMessage(e).indexOf('Response does not arrive') != -1) {
+        return true;
+    }
+    return false;
+}
+
 let aiStudio = function (options) {
     options = options || {};
     options = setApiUri(options);
     options = setRequestHeaders(options);
+    // we will increase the connection timeout by default
+    options.settings = options.settings || {};
+    options.settings.connectionTimeout = 1000 * 60; // 60 seconds
     return options;
 }
 
