@@ -68,9 +68,9 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
 
     if (callback) {
         if (callbackData) {
-            sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: 1000 * 60 * 10});
+            sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: 1000 * 60 * 60 * 24});
         }
-        sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
+        sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 60 * 24});
     }
 
     return taskId;
@@ -121,9 +121,9 @@ exports.chat = function(taskId, files, message, options, callbackData, callback)
 
     if (callback) {
         if (callbackData) {
-            sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: 1000 * 60 * 10});
+            sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: 1000 * 60 * 60 * 24});
         }
-        sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
+        sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 60 * 24});
     }
 
     // Clear response in case there is an old one for this task
