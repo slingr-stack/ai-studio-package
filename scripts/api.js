@@ -123,6 +123,7 @@ function sendRequest(method, options, callbackData, callbacks) {
             return dependencies.http[method](options, callbackData, callbacks);
         } else if (isConnectionTimeout(error)) {
             // if this is a connection timeout, we will simply retry one more time
+            sys.logs.warn('[aistudio] Connection timeout. Retrying');
             return dependencies.http[method](options, callbackData, callbacks);
         } else {
             throw error;
