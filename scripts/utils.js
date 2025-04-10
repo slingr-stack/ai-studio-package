@@ -49,3 +49,17 @@ exports.uploadFile = function(fileId) {
 
     return fileUploadResult.fileId;
 };
+
+
+/**
+ * Check if the provided error is a connection timeout error.
+ *
+ * @param {Error} e - The error object to check
+ * @returns {boolean} - True if the error is a connection timeout error, false otherwise
+ */
+exports.isConnectionTimeout = function(e) {
+    if (sys.exceptions.getMessage(e).indexOf('Response does not arrive') != -1) {
+        return true;
+    }
+    return false;
+};
