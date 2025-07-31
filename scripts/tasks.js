@@ -8,14 +8,21 @@
  * @returns {string} The task ID
  */
 exports.execute = function(projectCode, agentCode, inputs, callbackData, callback) {
-    // Find the agent by code using the API
-    let agentsResponse = pkg.aistudio.api.get(`/data/agents?project.code=${projectCode}&code=${agentCode}`);
+    // Load information of the agent to validate inputs
+    let agent = sys.storage.get(`aistudio_agent_${projectCode}_${agentCode}`);
+    if (!agent) {
+        // Find the agent by code using the API
+        let agentsResponse = pkg.aistudio.api.get(`/data/agents?project.code=${projectCode}&code=${agentCode}`);
 
-    if (!agentsResponse || !agentsResponse.items || agentsResponse.items.length === 0) {
-        throw new Error('Agent not found for code: ' + agentCode);
+        if (!agentsResponse || !agentsResponse.items || agentsResponse.items.length === 0) {
+            throw new Error('Agent not found for code: ' + agentCode);
+        }
+
+        agent = agentsResponse.items[0];
+
+        // Cache the agent information for 5 minutes. Useful when placing many tasks for the same agent
+        sys.storage.put(`aistudio_agent_${projectCode}_${agentCode}`, agent, {ttl: 1000 * 60 * 5});
     }
-
-    let agent = agentsResponse.items[0];
 
     // Prepare task inputs
     let taskInputs = [];
