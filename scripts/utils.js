@@ -49,3 +49,13 @@ exports.uploadFile = function(fileId) {
 
     return fileUploadResult.fileId;
 };
+/**
+ * Clear the cache of the agent information. Useful if you changed the inputs of the agents
+ * and you need to update it faster than the regular 5 minutes update.
+ *
+ * @param {string} projectCode - The code of the project the agent belongs to.
+ * @param {string} agentCode - The code of the agent to clear cache.
+ * */
+exports.clearAgentCache = function(projectCode, agentCode) {
+    sys.storage.remove(`aistudio_agent_${projectCode}_${agentCode}`);
+};
