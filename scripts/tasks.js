@@ -71,7 +71,7 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
         environment: '${APP_ENV}',
     };
     let currentUser = sys.context.getCurrentUserRecord();
-    if (!currentUser.isSystemUser()) {
+    if (!currentUser.field('permissions.systemUser').val()) {
         callerInfo.userEmail = currentUser.field('email').val();
         if (agent.otherSettings && agent.otherSettings.requireUserToken) {
             let userToken = sys.storage.get(`aistudio_user_token_${currentUser.id()}`);
