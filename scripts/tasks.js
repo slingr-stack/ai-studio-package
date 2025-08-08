@@ -5,9 +5,10 @@
  * @param {object} inputs - A map of input names to their values. For file inputs send the ID of the file.
  * @param {object} callbackData - Data to pass to the callback function.
  * @param {function} callback - The callback to be called when the task is ready. Webhooks have to be enabled.
+ * @param {function} errorCallback - The callback to be called when there was an error executing the task. Webhooks have to be enabled.
  * @returns {string} The task ID
  */
-exports.execute = function(projectCode, agentCode, inputs, callbackData, callback) {
+exports.execute = function(projectCode, agentCode, inputs, callbackData, callback, errorCallback) {
     // Load information of the agent to validate inputs
     let agent = sys.storage.get(`aistudio_agent_${projectCode}_${agentCode}`);
     if (!agent) {
@@ -96,11 +97,16 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
     let createTaskResponse = pkg.aistudio.api.post('/data/tasks', task);
     let taskId = createTaskResponse.id;
 
-    if (callback) {
+    if (callback || errorCallback) {
         if (callbackData) {
             sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: 1000 * 60 * 10});
         }
-        sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
+        if (callback) {
+            sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
+        }
+        if (errorCallback) {
+            sys.storage.put(`aistudio_task_errorCallback_${taskId}`, errorCallback.toString(), {ttl: 1000 * 60 * 10});
+        }
     }
 
     return taskId;
