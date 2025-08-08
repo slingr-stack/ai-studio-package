@@ -70,7 +70,7 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
         app: '${APP_NAME}',
         environment: '${APP_ENV}',
     };
-    let currentUser = sys.context.getCurrentUser();
+    let currentUser = sys.context.getCurrentUserRecord();
     if (!currentUser.isSystemUser()) {
         callerInfo.userEmail = currentUser.field('email').val();
         if (agent.otherSettings && agent.otherSettings.requireUserToken) {
