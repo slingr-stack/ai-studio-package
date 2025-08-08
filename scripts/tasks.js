@@ -1,5 +1,3 @@
-const { use } = require("react");
-
 /**
  * Executes a task for a given agent with provided inputs.
  * @param {string} projectCode - The code of the project the agent belongs to.
@@ -68,14 +66,14 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
 
     // Adding caller info
     let callerInfo = {
-        tpye: 'slingrApp',
+        type: 'slingrApp',
         app: '${APP_NAME}',
         environment: '${APP_ENV}',
     };
     let currentUser = sys.context.getCurrentUser();
     if (!currentUser.isSystemUser()) {
         callerInfo.userEmail = currentUser.field('email').val();
-        if (agent.otherSettings && agent.otherSettings.requireUserToken) {            
+        if (agent.otherSettings && agent.otherSettings.requireUserToken) {
             let userToken = sys.storage.get(`aistudio_user_token_${currentUser.id()}`);
             if (!userToken) {
                 let tokenResponse = sys.auth.createToken(currentUser);
@@ -165,7 +163,7 @@ exports.chat = function(taskId, files, message, options, callbackData, callback)
 };
 
 /**
- * Waits for the task to be ready. It
+ * Waits for the task to be ready. It repeatedly checks the task status until the response is available or the timeout is reached.
  * @param {string} taskId - The ID of the task to wait for.
  * @param {number} timeout - Maximum time in milliseconds to wait for the task to be ready. An exception will be thrown. Default to 10 minutes.
  * @returns {string} The response of the task.
