@@ -120,6 +120,7 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
  * @param options {string} - Options for this interaction (like overriding the model).
  * @param {object} callbackData - Data to pass to the callback function.
  * @param callback {function} - A callback to call when the response from the model is ready. Optional.
+ * @param {function} errorCallback - The callback to be called when there was an error executing the task. Webhooks have to be enabled.
  */
 exports.chat = function(taskId, files, message, options, callbackData, callback) {
     options = options || {};
@@ -155,11 +156,16 @@ exports.chat = function(taskId, files, message, options, callbackData, callback)
 
     pkg.aistudio.api.put(`/data/tasks/${taskId}/chat`, body);
 
-    if (callback) {
+    if (callback || errorCallback) {
         if (callbackData) {
             sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: 1000 * 60 * 10});
         }
-        sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
+        if (callback) {
+            sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
+        }
+        if (errorCallback) {
+            sys.storage.put(`aistudio_task_errorCallback_${taskId}`, errorCallback.toString(), {ttl: 1000 * 60 * 10});
+        }
     }
 
     // Clear response in case there is an old one for this task

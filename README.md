@@ -91,7 +91,7 @@ For more details about making HTTP requests, refer to the [HTTP service document
 You can easily create a task like this:
 
 ```javascript
-let taskId = pkg.aistudio.tasks.execute(projectCode, agentCode, inputs);  
+let taskId = pkg.aistudio.tasks.execute(projectCode, agentCode, inputs, callbackData, callback, errorCallback);  
 ```
 
 Here, `inputs` is a map with the inputs needed by the agent. If the input is a file, you need to pass the file ID.
@@ -99,12 +99,14 @@ Here, `inputs` is a map with the inputs needed by the agent. If the input is a f
 Additionally, you can pass a callback that will be called when the task is ready in an async way:
 
 ```javascript
-pkg.aistudio.tasks.execute(projectCode, agentCode, inputs, function(taskId, response) {
+pkg.aistudio.tasks.execute(projectCode, agentCode, inputs, {}, function(taskId, response, callbackData) {
     // do something with the response
+}, function(taskId, errors, callbackData) {
+    // handle error
 });
 ```
 
-Keep in mind that the callback is called async and the context is lost.
+Keep in mind that the callback is called async and the context is lost, so any information has to be send through the callback data parameter.
 
 ### Chat in task
 
@@ -142,6 +144,8 @@ let response = pkg.aistudio.tasks.waitToBeReady(taskId, 1000 * 60 * 10);
 log(response);
 ```
 
+If there is an error executing the task, an exception will be thrown when waiting for the task to be ready. Be prepared to handle it.
+
 # Events
 
 ## Webhook
@@ -164,8 +168,10 @@ When a task is ready, a webhook is sent with the following information:
 
 ```javascript
 sys.logs.info(`Task ID: ${event.data.taskId}`);
+sys.logs.info(`Task ID: ${event.data.status}`); // if there is an error, this will be 'error'
 sys.logs.info(`Callback executed: ${event.data.callbackExecuted}`);
 sys.logs.info(`Response: ${event.data.response}`);
+sys.logs.info(`Errors: ${JSON.stringify(event.data.response)}`); // if status was 'error', you'll find an array of strings with the error
 ```
 
 # About Slingr
