@@ -76,7 +76,7 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
         if (agent.otherSettings && agent.otherSettings.requireUserToken) {
             let userToken = sys.storage.get(`aistudio_user_token_${currentUser.id()}`);
             if (!userToken) {
-                let tokenResponse = sys.auth.createToken(currentUser);
+                let tokenResponse = sys.auth.createToken(currentUser.id());
                 if (tokenResponse && tokenResponse.token) {
                     userToken = tokenResponse.token;
                     sys.storage.put(`aistudio_user_token_${currentUser.id()}`, userToken, {ttl: 1000 * 60 * 60 * 1});
