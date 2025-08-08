@@ -181,5 +181,8 @@ exports.waitToBeReady = function(taskId, timeout) {
         taskResponse = sys.storage.get(`aistudio_task_response_${taskId}`);
     }
     sys.storage.remove(`aistudio_task_response_${taskId}`);
-    return taskResponse;
+    if (taskResponse.status == 'error') {
+        throw `Task [${taskId}] failed with errors: ${taskResponse.errors.join(', ')}`;
+    }
+    return taskResponse.response;
 }
