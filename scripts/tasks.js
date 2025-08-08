@@ -1,3 +1,5 @@
+const { use } = require("react");
+
 /**
  * Executes a task for a given agent with provided inputs.
  * @param {string} projectCode - The code of the project the agent belongs to.
@@ -64,10 +66,33 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
         }
     }
 
+    // Adding caller info
+    let callerInfo = {
+        tpye: 'slingrApp',
+        app: '${APP_NAME}',
+        environment: '${APP_ENV}',
+    };
+    let currentUser = sys.context.getCurrentUser();
+    if (!currentUser.isSystemUser()) {
+        callerInfo.userEmail = currentUser.field('email').val();
+        if (agent.otherSettings && agent.otherSettings.requireUserToken) {            
+            let userToken = sys.storage.get(`aistudio_user_token_${currentUser.id()}`);
+            if (!userToken) {
+                let tokenResponse = sys.auth.createToken(currentUser);
+                if (tokenResponse && tokenResponse.token) {
+                    userToken = tokenResponse.token;
+                    sys.storage.put(`aistudio_user_token_${currentUser.id()}`, userToken, {ttl: 1000 * 60 * 60 * 1});
+                }
+            }
+            callerInfo.userToken = userToken;
+        }
+    }
+
     // Create the task
     let task = {
         agent: agent.id, // Just the agent ID
-        inputs: taskInputs
+        inputs: taskInputs,
+        callerInfo: callerInfo
     };
 
     let createTaskResponse = pkg.aistudio.api.post('/data/tasks', task);
