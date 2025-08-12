@@ -108,8 +108,6 @@ exports.options = function (path, httpOptions, callbackData, callbacks) {
  Request hanlder
  ****************************************************/
 
-let cachedToken;
-
 function sendRequest(method, options, callbackData, callbacks) {
     options.method = method;
     try {
@@ -148,7 +146,7 @@ function setApiUri(options) {
 
 function setRequestHeaders(options) {
     let headers = options.headers || {};
-
+    let cachedToken = sys.storage.get('aistudio_token');
     if (config.get('authenticationMethod') === 'apiToken') {
         sys.logs.debug('[aistudio] Set token header');
         headers = mergeJSON(headers, {"token": config.get("apiToken")});
@@ -172,8 +170,7 @@ function refreshToken() {
     options = aiStudio(options);
 
     let response = dependencies.http.post(options);
-    cachedToken = response.token;
-
+    sys.storage.put('aistudio_token', response.token, {ttl: 1000 * 60 * 60 * 8});
 }
 
 
