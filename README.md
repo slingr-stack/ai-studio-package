@@ -171,7 +171,7 @@ sys.logs.info(`Task ID: ${event.data.taskId}`);
 sys.logs.info(`Task ID: ${event.data.status}`); // if there is an error, this will be 'error'
 sys.logs.info(`Callback executed: ${event.data.callbackExecuted}`);
 sys.logs.info(`Response: ${event.data.response}`);
-sys.logs.info(`Errors: ${JSON.stringify(event.data.response)}`); // if status was 'error', you'll find an array of strings with the error
+sys.logs.info(`Errors: ${JSON.stringify(event.data.errors)}`); // if status was 'error', you'll find an array of strings with the errors
 ```
 
 # About Slingr
