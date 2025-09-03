@@ -3,7 +3,8 @@
  * @param {string} projectCode - The code of the project the agent belongs to.
  * @param {string} agentCode - The code of the agent to execute the task for.
  * @param {object} inputs - A map of input names to their values. For file inputs send the ID of the file.
- * @param {object} callbackData - Data to pass to the callback function.
+ * @param {object} callbackData - Data to pass to the callback function. Some system options you can pass here:
+ *                               - timeout: maximum time in milliseconds to wait for the task to be ready. Default to 10 minutes.
  * @param {function} callback - The callback to be called when the task is ready. Webhooks have to be enabled.
  * @param {function} errorCallback - The callback to be called when there was an error executing the task. Webhooks have to be enabled.
  * @returns {string} The task ID
@@ -98,14 +99,19 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
     let taskId = createTaskResponse.id;
 
     if (callback || errorCallback) {
+        let callbackTimeout = 1000 * 60 * 10; // 10 minutes;        
         if (callbackData) {
-            sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: 1000 * 60 * 10});
+            if (callbackData.timeout && !isNaN(callbackData.timeout)) {
+                callbackTimeout = parseInt(callbackData.timeout);
+                delete callbackData.timeout;
+            }
+            sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: callbackTimeout});
         }
         if (callback) {
-            sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
+            sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: callbackTimeout});
         }
         if (errorCallback) {
-            sys.storage.put(`aistudio_task_errorCallback_${taskId}`, errorCallback.toString(), {ttl: 1000 * 60 * 10});
+            sys.storage.put(`aistudio_task_errorCallback_${taskId}`, errorCallback.toString(), {ttl: callbackTimeout});
         }
     }
 
@@ -117,7 +123,10 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
  * @param taskId {string} - The ID of the task to add a message.
  * @param files {string[]} - The ID of the files to send in the message. Optional.
  * @param message {string} - The message to add to the task.
- * @param options {string} - Options for this interaction (like overriding the model).
+ * @param options {object} - Options for this interaction (like overriding the model):
+ *                           - modelSettings: 'default' or 'override'. If 'override' is selected, the model property must be provided.
+ *                           - model: the code of the model to use for this interaction. Only used if modelSettings is 'override'.
+ *                           - timeout: maximum time in milliseconds to wait for the task to be ready. Default to 10 minutes.
  * @param {object} callbackData - Data to pass to the callback function.
  * @param callback {function} - A callback to call when the response from the model is ready. Optional.
  * @param {function} errorCallback - The callback to be called when there was an error executing the task. Webhooks have to be enabled.
@@ -157,14 +166,18 @@ exports.chat = function(taskId, files, message, options, callbackData, callback)
     pkg.aistudio.api.put(`/data/tasks/${taskId}/chat`, body);
 
     if (callback || errorCallback) {
+        let callbackTimeout = 1000 * 60 * 10; // 10 minutes;
+        if (options.timeout && !isNaN(options.timeout)) {
+            callbackTimeout = parseInt(options.timeout);
+        }
         if (callbackData) {
-            sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: 1000 * 60 * 10});
+            sys.storage.put(`aistudio_task_callback_data_${taskId}`, callbackData, {ttl: callbackTimeout});
         }
         if (callback) {
-            sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: 1000 * 60 * 10});
+            sys.storage.put(`aistudio_task_callback_${taskId}`, callback.toString(), {ttl: callbackTimeout});
         }
         if (errorCallback) {
-            sys.storage.put(`aistudio_task_errorCallback_${taskId}`, errorCallback.toString(), {ttl: 1000 * 60 * 10});
+            sys.storage.put(`aistudio_task_errorCallback_${taskId}`, errorCallback.toString(), {ttl: callbackTimeout});
         }
     }
 

@@ -106,7 +106,7 @@ pkg.aistudio.tasks.execute(projectCode, agentCode, inputs, {}, function(taskId, 
 });
 ```
 
-Keep in mind that the callback is called async and the context is lost, so any information has to be send through the callback data parameter.
+Keep in mind that the callback is called async and the context is lost, so any information has to be send through the callback data parameter. By default, we will wait 10 minutes for the response to arrive, otherwise the callback will be removed. You can change the timeout by passing the `timeout` property insde `callbackData`.
 
 ### Chat in task
 
@@ -124,7 +124,7 @@ pkg.aistudio.tasks.chat(taskId, null, 'The total in the answer does not match. C
 });
 ```
 
-Keep in mind that the callback is called async and the context is lost.
+Keep in mind that the callback is called async and the context is lost. By default, we will wait 10 minutes for the response to arrive, otherwise the callback will be removed. You can change the timeout by passing the `timeout` property insde `callbackData`.
 
 ### Wait for task
 
