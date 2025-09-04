@@ -131,7 +131,7 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
  * @param callback {function} - A callback to call when the response from the model is ready. Optional.
  * @param {function} errorCallback - The callback to be called when there was an error executing the task. Webhooks have to be enabled.
  */
-exports.chat = function(taskId, files, message, options, callbackData, callback) {
+exports.chat = function(taskId, files, message, options, callbackData, callback, errorCallback) {
     options = options || {};
 
     let body = {
