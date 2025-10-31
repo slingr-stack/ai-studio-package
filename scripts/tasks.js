@@ -78,7 +78,14 @@ exports.execute = function(projectCode, agentCode, inputs, callbackData, callbac
         if (agent.otherSettings && agent.otherSettings.requireUserToken) {
             let userToken = sys.storage.get(`aistudio_user_token_${currentUser.id()}`);
             if (!userToken) {
-                let tokenResponse = sys.auth.createToken(currentUser.id());
+                let oldUserId = sys.context.getCurrentUserId();
+                sys.context.setCurrentUserRecordByEmail(`system@${sys.app.getName()}.slingrs.io`);
+                let tokenResponse;
+                try {
+                    tokenResponse = sys.auth.createToken(currentUser.id());
+                } finally {
+                    sys.context.setCurrentUserRecordById(oldUserId);
+                }
                 if (tokenResponse && tokenResponse.token) {
                     userToken = tokenResponse.token;
                     sys.storage.put(`aistudio_user_token_${currentUser.id()}`, userToken, {ttl: 1000 * 60 * 60 * 1});
