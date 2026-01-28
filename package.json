@@ -120,6 +120,11 @@
     },
     {
       "type": "script",
+      "namespace": "knowledge",
+      "path": "/scripts/knowledge.js"
+    },
+    {
+      "type": "script",
       "namespace": "utils",
       "path": "/scripts/utils.js"
     },
