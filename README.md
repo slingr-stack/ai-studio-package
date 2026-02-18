@@ -146,6 +146,61 @@ log(response);
 
 If there is an error executing the task, an exception will be thrown when waiting for the task to be ready. Be prepared to handle it.
 
+## Knowledge utilities
+
+### Create knowledge base
+
+You can create a new knowledge base in a project like this:
+
+```javascript
+let knowledge = pkg.aistudio.knowledge.createKnowledge(projectCode, name, metadata);
+```
+
+### Add text data
+
+You can add text data to a knowledge base like this:
+
+```javascript
+let data = pkg.aistudio.knowledge.addTextData(knowledgeId, title, data, metadata);
+```
+
+### Add file data
+
+You can add file data to a knowledge base like this:
+
+```javascript
+let data = pkg.aistudio.knowledge.addFileData(knowledgeId, title, fileId, metadata);
+```
+
+### Remove data
+
+You can remove data from a knowledge base like this:
+
+```javascript
+pkg.aistudio.knowledge.removeData(dataId);
+```
+
+### Process data
+
+You can process data in a knowledge base like this:
+
+```javascript
+let chunkingOptions = {
+    strategy: 'numberOfCharacters', // 'doNotChunk' | 'numberOfCharacters' | 'perPage' | 'aiByTopic'
+    quantity: 1000,
+    overlap: 200
+};
+let embeddingOptions = {
+    strategy: 'original', // 'original' | 'extractText' | 'summarize' | 'describe'
+    maxWords: 100 // Only required for 'summarize' or 'describe'
+};
+let storageOptions = {
+    strategy: 'original', // 'original' | 'extractText' | 'summarize' | 'describe'
+    maxWords: 100 // Only required for 'summarize' or 'describe'
+};
+let job = pkg.aistudio.knowledge.processData(dataId, chunkingOptions, embeddingOptions, storageOptions);
+```
+
 # Events
 
 ## Webhook
